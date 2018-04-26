@@ -1,12 +1,36 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using TokenBucket.NetStandart;
 
 namespace MessageQueue
 {
+    public class TelegramMessageQueueV2
+    {
+        class QueueElement
+        {
+            public Func<Task> Function { get; set; }
+        }
+
+        private readonly Queue<QueueElement> _commonQueue = new Queue<QueueElement>();
+
+        private readonly ConcurrentDictionary<string, ConcurrentQueue<QueueElement>> _groupQueues 
+            = new ConcurrentDictionary<string, ConcurrentQueue<QueueElement>>();
+
+        public async Task<T> Run<T>(Func<Task<T>> task, string target)
+        {
+            await GetPermission(target);
+
+            return await task();
+        }
+
+        private Task GetPermission(string target)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class TelegramMessageQueue
     {
         private readonly ConcurrentDictionary<string, ITokenBucket> _buckets =
