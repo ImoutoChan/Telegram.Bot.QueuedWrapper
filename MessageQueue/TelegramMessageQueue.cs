@@ -10,7 +10,15 @@ namespace MessageQueue
     {
         class QueueElement
         {
-            public Func<Task> Function { get; set; }
+            public string Target { get; set; }
+
+
+            public event EventHandler Completed;
+
+            public virtual void OnCompleted()
+            {
+                Completed?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private readonly Queue<QueueElement> _commonQueue = new Queue<QueueElement>();
@@ -27,7 +35,30 @@ namespace MessageQueue
 
         private Task GetPermission(string target)
         {
-            throw new NotImplementedException();
+            var tcs = new TaskCompletionSource<bool>();
+            var element = new QueueElement
+            {
+                Target = target
+            };
+
+            element.Completed += (s, e) =>
+            {
+                tcs.SetResult(true);
+            };
+
+            Enqueue(element);
+
+            return tcs.Task;
+        }
+
+        private void Enqueue(QueueElement element)
+        {
+            if (!_groupQueues.TryGetValue(element.Target, out var queue))
+            {
+                queue = _groupQueues.AddOrUpdate(element.Target, s => new ConcurrentQueue<QueueElement>(), (s, elements) => elements));
+            }
+
+            queue.Enqueue(element);
         }
     }
 
