@@ -80,6 +80,77 @@ namespace MessageQueue.Tests
 
         }
 
+        [Fact]
+        public async Task TestTelegramMessageQueueV2()
+        {
+            var messageQueue = new TelegramMessageQueueV2();
+
+            var tasks = new List<Task>();
+            var runtimes = new List<(int GroupIndex, long Elapsed)>();
+
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            for (int groupIndex = -1; groupIndex > -2; groupIndex--)
+            {
+                for (int i = 0; i < 25; i++)
+                {
+                    var grIndex = groupIndex;
+                    var iCopy = i;
+                    tasks.Add(messageQueue.Run(
+                        async () =>
+                        {
+                          runtimes.Add((grIndex, stopWatch.ElapsedMilliseconds));
+                          Debug.WriteLine($"group{grIndex}\t{iCopy}\t" + stopWatch.ElapsedMilliseconds);
+                          await Task.Delay(1);
+                        },
+                        groupIndex.ToString()));
+                }
+            }
+
+            await Task.WhenAll(tasks);
+
+            var callTimes = runtimes.OrderBy(x => x).ToList();
+
+            var first = callTimes.First();
+            var last = callTimes.Last();
+            var interval = 1000;
+
+            // <= 1 message per second to same group
+            for (var i = first.Elapsed; i <= last.Elapsed - interval; i = i + 1)
+            {
+                callTimes
+                   .GroupBy(x => x.GroupIndex)
+                   .Select(group => group.Count(x => x.Elapsed >= i && x.Elapsed < i + interval)
+                              .Should()
+                              .BeLessOrEqualTo(1))
+                   .ToList();
+            }
+
+            // <= 30 messages per second
+            for (var i = first.Elapsed; i <= last.Elapsed - interval; i = i + 1)
+            {
+                callTimes
+                   .Count(x => x.Elapsed >= i && x.Elapsed < i + interval)
+                   .Should()
+                   .BeLessOrEqualTo(30);
+            }
+
+
+
+            // <= 20 message per minute to same group
+            interval = 60 * 1000;
+            for (var i = first.Elapsed; i <= last.Elapsed - interval; i = i + 1)
+            {
+                callTimes
+                   .GroupBy(x => x.GroupIndex)
+                   .Select(group => group.Count(x => x.Elapsed >= i && x.Elapsed < i + interval)
+                              .Should()
+                              .BeLessOrEqualTo(20))
+                   .ToList();
+            }
+
+        }
+
 
         [Fact]
         public async Task TestQueuedTelegram()

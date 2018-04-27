@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bert.RateLimiters" Version="1.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TokenBucket.NetStandart\TokenBucket.NetStandart.csproj" />
   </ItemGroup>
 

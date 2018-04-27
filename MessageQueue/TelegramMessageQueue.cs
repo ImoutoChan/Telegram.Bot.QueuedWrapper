@@ -6,62 +6,6 @@ using TokenBucket.NetStandart;
 
 namespace MessageQueue
 {
-    public class TelegramMessageQueueV2
-    {
-        class QueueElement
-        {
-            public string Target { get; set; }
-
-
-            public event EventHandler Completed;
-
-            public virtual void OnCompleted()
-            {
-                Completed?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        private readonly Queue<QueueElement> _commonQueue = new Queue<QueueElement>();
-
-        private readonly ConcurrentDictionary<string, ConcurrentQueue<QueueElement>> _groupQueues 
-            = new ConcurrentDictionary<string, ConcurrentQueue<QueueElement>>();
-
-        public async Task<T> Run<T>(Func<Task<T>> task, string target)
-        {
-            await GetPermission(target);
-
-            return await task();
-        }
-
-        private Task GetPermission(string target)
-        {
-            var tcs = new TaskCompletionSource<bool>();
-            var element = new QueueElement
-            {
-                Target = target
-            };
-
-            element.Completed += (s, e) =>
-            {
-                tcs.SetResult(true);
-            };
-
-            Enqueue(element);
-
-            return tcs.Task;
-        }
-
-        private void Enqueue(QueueElement element)
-        {
-            if (!_groupQueues.TryGetValue(element.Target, out var queue))
-            {
-                queue = _groupQueues.AddOrUpdate(element.Target, s => new ConcurrentQueue<QueueElement>(), (s, elements) => elements));
-            }
-
-            queue.Enqueue(element);
-        }
-    }
-
     public class TelegramMessageQueue
     {
         private readonly ConcurrentDictionary<string, ITokenBucket> _buckets =
