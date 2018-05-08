@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading.Tasks;
 using Bert.RateLimiters;
 
@@ -78,14 +79,33 @@ namespace MessageQueue
                     : TimeSpan.Zero;
                 Debug.WriteLine($"{_name} | firstValue: {_requestTimes.First?.Value}");
 
-                var current = DateTime.Now.Add(time);
-                _requestTimes.AddLast(current);
-                Debug.WriteLine($"{_name} | added: {current}");
+                var expectedToRun = DateTime.Now.Add(time);
+                _requestTimes.AddLast(expectedToRun);
+                Debug.WriteLine($"{_name} | added: {expectedToRun}");
 
+                //WriteLinked(_requestTimes);
                 
                 Debug.WriteLine($"{_name} | result: {time}");
                 return time;
             }
+        }
+
+        private void WriteLinked(LinkedList<DateTime> requestTimes)
+        {
+            var sb = new StringBuilder();
+            sb.Append($"{_name} | DebugList: ");
+            var node = requestTimes.First;
+
+            while (node != null)
+            {
+                sb.Append($"{node.Value:mm:sss}\t");
+
+                node = node.Next;
+            }
+
+            sb.AppendLine();
+
+            Debug.WriteLine(sb);
         }
 
         private int CountAndClean(DateTime leftTime)

@@ -18,11 +18,11 @@ namespace MessageQueue
         private readonly Dictionary<string, QueueBasedMessageRateLimiter> _chatLimiters 
             = new Dictionary<string, QueueBasedMessageRateLimiter>();
         private readonly QueueBasedMessageRateLimiter _baseLimiter 
-            = new QueueBasedMessageRateLimiter("default", 30, TimeSpan.FromSeconds(30));
+            = new QueueBasedMessageRateLimiter("default", 30, TimeSpan.FromSeconds(1));
 
         public async Task Run(Func<Task> task, string target)
         {
-            Debug.WriteLine($"PermissionRequested: {DateTime.Now:O}");
+            //Debug.WriteLine($"PermissionRequested: {DateTime.Now:O}");
             await GetPermission(target);
             Debug.WriteLine($"PermissionGranted: {DateTime.Now:O}");
 
