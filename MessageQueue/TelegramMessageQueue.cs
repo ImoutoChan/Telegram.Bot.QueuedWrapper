@@ -1,95 +1,116 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
-using TokenBucket.NetStandart;
 
 namespace MessageQueue
 {
     public class TelegramMessageQueue
     {
-        private readonly ConcurrentDictionary<string, ITokenBucket> _buckets =
-            new ConcurrentDictionary<string, ITokenBucket>();
-
-        public TelegramMessageQueue()
+        class QueueElement
         {
-            Configure("default", TimeSpan.FromSeconds(1), 30);
+            public string Target { get; set; }
+        }
+        
+        private readonly Dictionary<string, QueueBasedMessageRateLimiter> _groupLimiters 
+            = new Dictionary<string, QueueBasedMessageRateLimiter>();
+        private readonly Dictionary<string, QueueBasedMessageRateLimiter> _chatLimiters 
+            = new Dictionary<string, QueueBasedMessageRateLimiter>();
+        private readonly QueueBasedMessageRateLimiter _baseLimiter 
+            = new QueueBasedMessageRateLimiter("default", 30, TimeSpan.FromSeconds(1));
+
+        public async Task RunThroughQueue(Func<Task> task, string target = "defaultTarget")
+        {
+            //Debug.WriteLine($"PermissionRequested: {DateTime.Now:O}");
+            await GetPermission(target);
+            Debug.WriteLine($"PermissionGranted: {DateTime.Now:O}");
+
+            await task();
         }
 
-        private ITokenBucket Configure(string tag, TimeSpan interval, int limit)
+        public async Task<T> RunThroughQueue<T>(Func<Task<T>> task, string target = "defaultTarget")
         {
-            return _buckets.AddOrUpdate(tag,
-                                        s => TokenBuckets
-                                           .Construct()
-                                           .WithCapacity(limit)
-                                           .WithFixedIntervalRefillStrategy(limit, interval)
-                                           .Build(),
-                                        (s, bucket) => bucket);
+            await GetPermission(target);
+
+            return await task();
         }
 
-        public async Task RunThroughQueue(Func<Task> task, string groupId = null)
-        {
-            await Throttle(groupId);
 
-            try
+        private async Task GetPermission(string target)
+        {
+            var element = new QueueElement
             {
-                await task();
+                Target = target
+            };
+
+            await Delay(element);
+        }
+        private async Task Delay(QueueElement element)
+        {
+            if (IsGroup(element))
+            {
+                await DelayGroup(element);
             }
-            catch (Exception e)
+            else
             {
-                throw;
+                await DelayChat(element);
             }
         }
-
-        public async Task<T> RunThroughQueue<T>(Func<Task<T>> task, string groupId = "group_default")
+        private async Task DelayChat(QueueElement element)
         {
+            var limiter = GetChatLimiter(element);
 
-            await Throttle(groupId);
+            await limiter.Wait();
 
-            try
-            {
-                return await task();
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
+            await DelayBase(element);
+        }
+        private async Task DelayGroup(QueueElement element)
+        {
+            var limiter = GetGroupLimiter(element);
+
+            await limiter.Wait();
+
+            await DelayChat(element);
+        }
+        private async Task DelayBase(QueueElement element)
+        {
+            await _baseLimiter.Wait();
         }
 
-        private async Task Throttle(string groupId)
+        private QueueBasedMessageRateLimiter GetGroupLimiter(QueueElement element)
         {
-            var buckets = new List<ITokenBucket>();
-            _buckets.TryGetValue("default", out var defaultBucket);
-
-            buckets.Add(defaultBucket);
-            if (groupId != null)
+            QueueBasedMessageRateLimiter limiter;
+            lock (_groupLimiters)
             {
-                var min = groupId + "_min";
-                var total = groupId + "_total";
-
-                if (!_buckets.TryGetValue(min, out var groupMinBucket))
+                if (!_groupLimiters.ContainsKey(element.Target))
                 {
-                    groupMinBucket = Configure(min, TimeSpan.FromMilliseconds(1000), 1);
+                    Debug.WriteLine($"Creater {element.Target}: {DateTime.Now:O}");
+                    _groupLimiters.Add(element.Target, new QueueBasedMessageRateLimiter("group: " + element.Target, 20, TimeSpan.FromMinutes(1)));
                 }
 
-                if (!_buckets.TryGetValue(total, out var groupTotalBucket))
-                {
-                    groupTotalBucket = Configure(total, TimeSpan.FromSeconds(60), 20);
-                }
-
-                buckets.Add(groupMinBucket);
-                buckets.Add(groupTotalBucket);
-                buckets.Reverse();
+                limiter = _groupLimiters[element.Target];
             }
 
-
-            foreach (var bucket in buckets)
-            {
-                while (!bucket.TryConsume())
-                {
-                    await Task.Delay(10);
-                }
-            }
+            return limiter;
         }
+        private QueueBasedMessageRateLimiter GetChatLimiter(QueueElement element)
+        {
+            QueueBasedMessageRateLimiter limiter;
+            lock (_chatLimiters)
+            {
+                if (!_chatLimiters.ContainsKey(element.Target))
+                {
+                    Debug.WriteLine($"Creater {element.Target}: {DateTime.Now:O}");
+                    _chatLimiters.Add(element.Target, new QueueBasedMessageRateLimiter("chat: " + element.Target, 1, TimeSpan.FromSeconds(1)));
+                }
+
+                limiter = _chatLimiters[element.Target];
+            }
+
+            return limiter;
+        }
+
+        private bool IsGroup(QueueElement element) 
+            => !Int64.TryParse(element.Target, out var id) || id < 0;
     }
 }

@@ -1,37 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using Bert.RateLimiters;
 
 namespace MessageQueue
 {
-    public class MessageRateLimiter
-    {
-        private readonly LeakyTokenBucket _bucket;
-
-        public MessageRateLimiter(int limit, TimeSpan forInterval)
-        {
-            _bucket = new StepDownTokenBucket(limit,  
-                1, 
-                (int)forInterval.TotalMilliseconds, 
-                1, 
-                1, 
-                (int)(forInterval.TotalMilliseconds / limit));
-        }
-
-        public async Task Wait()
-        {
-            if (_bucket.ShouldThrottle(out var waitTime))
-            {
-                Debug.WriteLine(waitTime);
-                await Task.Delay(waitTime);
-            }
-        }
-    }
-
     public class QueueBasedMessageRateLimiter
     {
         private readonly string _name;
@@ -63,23 +37,29 @@ namespace MessageQueue
             Debug.WriteLine($"{_name} | GetWaitTime");
             lock (_locker)
             {
-                var lastTime = _requestTimes.Count == 0 || _requestTimes.Last.Value.AddMilliseconds(1) < DateTime.Now
-                                  ? DateTime.Now
-                                  : _requestTimes.Last.Value.AddMilliseconds(1);
-                
-                Debug.WriteLine($"{_name} | Current: {lastTime} | Count: {_requestTimes.Count}");
-                var leftTime = lastTime.Add(-_forInterval);
+                var dateTimeNow = DateTime.Now;
+
+                var lastCallTime = _requestTimes.Count == 0 
+                                   || _requestTimes.Last.Value.AddMilliseconds(1) < dateTimeNow
+                    ? dateTimeNow
+                    : _requestTimes.Last.Value.AddMilliseconds(1);
+                Debug.WriteLine($"{_name} | Current: {lastCallTime} | Count: {_requestTimes.Count}");
+
+                var leftTime = lastCallTime.Add(-_forInterval);
                 Debug.WriteLine($"{_name} | Left: {leftTime}");
 
                 var count = CountAndClean(leftTime);
                 Debug.WriteLine($"{_name} | calculatedCount: {count}");
 
                 var time = count >= _limit 
-                    ? _requestTimes.First.Value - DateTime.Now.Add(-_forInterval)
+                    ? _requestTimes.First.Value - dateTimeNow.Add(-_forInterval)
                     : TimeSpan.Zero;
                 Debug.WriteLine($"{_name} | firstValue: {_requestTimes.First?.Value}");
 
-                var expectedToRun = DateTime.Now.Add(time);
+                var addTo = dateTimeNow ;//> leftTime ? dateTimeNow : leftTime;
+                Debug.WriteLine($"{_name} | addTo: {addTo}");
+
+                var expectedToRun = addTo.Add(time);
                 _requestTimes.AddLast(expectedToRun);
                 Debug.WriteLine($"{_name} | added: {expectedToRun}");
 
@@ -103,8 +83,6 @@ namespace MessageQueue
                 node = node.Next;
             }
 
-            sb.AppendLine();
-
             Debug.WriteLine(sb);
         }
 
@@ -119,7 +97,7 @@ namespace MessageQueue
             var counter = 0;
 
             // Count all greater then provided time
-            while (node.Value > leftTime)
+            while (node.Value >= leftTime)
             {
                 counter++;
 
