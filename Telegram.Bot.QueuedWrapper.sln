@@ -3,13 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageQueue", "MessageQueue\MessageQueue.csproj", "{8D591084-207E-4BFA-AEC8-4EB41B3C34FD}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageQueue.Tests", "MessageQueue.Tests\MessageQueue.Tests.csproj", "{EFB34C17-6DBA-40E6-9E1B-15FDEFB63A2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenBucket.NetStandart", "TokenBucket.NetStandart\TokenBucket.NetStandart.csproj", "{EBFD7A7F-698C-4B3E-A473-B6F7056E2636}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram.Bot.QueuedWrapper", "Telegram.Bot.QueuedWrapper\Telegram.Bot.QueuedWrapper.csproj", "{96573E71-A0D1-4192-AA6A-89859427A2C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.Bot.QueuedWrapper", "Telegram.Bot.QueuedWrapper\Telegram.Bot.QueuedWrapper.csproj", "{96573E71-A0D1-4192-AA6A-89859427A2C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,18 +13,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8D591084-207E-4BFA-AEC8-4EB41B3C34FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8D591084-207E-4BFA-AEC8-4EB41B3C34FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D591084-207E-4BFA-AEC8-4EB41B3C34FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8D591084-207E-4BFA-AEC8-4EB41B3C34FD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EFB34C17-6DBA-40E6-9E1B-15FDEFB63A2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EFB34C17-6DBA-40E6-9E1B-15FDEFB63A2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFB34C17-6DBA-40E6-9E1B-15FDEFB63A2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFB34C17-6DBA-40E6-9E1B-15FDEFB63A2F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EBFD7A7F-698C-4B3E-A473-B6F7056E2636}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EBFD7A7F-698C-4B3E-A473-B6F7056E2636}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EBFD7A7F-698C-4B3E-A473-B6F7056E2636}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EBFD7A7F-698C-4B3E-A473-B6F7056E2636}.Release|Any CPU.Build.0 = Release|Any CPU
 		{96573E71-A0D1-4192-AA6A-89859427A2C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{96573E71-A0D1-4192-AA6A-89859427A2C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96573E71-A0D1-4192-AA6A-89859427A2C6}.Release|Any CPU.ActiveCfg = Release|Any CPU

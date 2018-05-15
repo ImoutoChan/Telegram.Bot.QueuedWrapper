@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace MessageQueue
+namespace Telegram.Bot.QueuedWrapper
 {
     public class TelegramMessageQueue
     {
