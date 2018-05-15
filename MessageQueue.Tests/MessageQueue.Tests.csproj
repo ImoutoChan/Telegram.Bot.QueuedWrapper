@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MessageQueue\MessageQueue.csproj" />
     <ProjectReference Include="..\Telegram.Bot.QueuedWrapper\Telegram.Bot.QueuedWrapper.csproj" />
   </ItemGroup>
 

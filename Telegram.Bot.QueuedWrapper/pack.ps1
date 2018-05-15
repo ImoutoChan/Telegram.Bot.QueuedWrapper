@@ -1,1 +1,0 @@
-﻿dotnet pack Telegram.Bot.QueuedWrapper.csproj -c Release
