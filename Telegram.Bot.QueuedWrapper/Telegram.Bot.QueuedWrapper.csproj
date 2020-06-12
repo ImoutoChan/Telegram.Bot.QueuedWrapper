@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -6,13 +6,13 @@
     <Description>Wrapper around Telegram.Bot library that throttle calls to api</Description>
     <PackageProjectUrl>https://github.com/ImoutoChan/Telegram.Bot.QueuedWrapper</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/ImoutoChan/Telegram.Bot.QueuedWrapper/master/LICENSE</PackageLicenseUrl>
-	<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
-	<Version>1.1.2</Version>
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+    <Version>1.1.3</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Telegram.Bot" Version="14.10.0" />
+    <PackageReference Include="Telegram.Bot" Version="15.6.0" />
   </ItemGroup>
   
     <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
