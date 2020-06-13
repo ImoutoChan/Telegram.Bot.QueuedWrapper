@@ -32,7 +32,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task<TResponse> MakeRequestAsync<TResponse>(
             IRequest<TResponse> request,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.MakeRequestAsync(request,
@@ -40,7 +40,7 @@ namespace Telegram.Bot.QueuedWrapper
         }
 
         public async Task<bool> TestApiAsync(
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.TestApiAsync(cancellationToken));
@@ -48,7 +48,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public void StartReceiving(
             UpdateType[] allowedUpdates = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             _telegramBotClientImplementation.StartReceiving(allowedUpdates, cancellationToken);
         }
@@ -63,7 +63,7 @@ namespace Telegram.Bot.QueuedWrapper
             int limit = 0,
             int timeout = 0,
             IEnumerable<UpdateType> allowedUpdates = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.GetUpdatesAsync(offset,
                                                                                                               limit,
@@ -77,7 +77,7 @@ namespace Telegram.Bot.QueuedWrapper
             InputFileStream certificate = null,
             int maxConnections = 0,
             IEnumerable<UpdateType> allowedUpdates = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SetWebhookAsync(url,
                                                                                                        certificate,
@@ -87,14 +87,14 @@ namespace Telegram.Bot.QueuedWrapper
         }
 
         public async Task DeleteWebhookAsync(
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .DeleteWebhookAsync(cancellationToken));
         }
 
         public async Task<WebhookInfo> GetWebhookInfoAsync(
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
@@ -102,7 +102,7 @@ namespace Telegram.Bot.QueuedWrapper
         }
 
         public async Task<User> GetMeAsync(
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.GetMeAsync(cancellationToken));
@@ -116,7 +116,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _messageQueue.RunThroughQueue(() =>
                                                        {
@@ -139,7 +139,7 @@ namespace Telegram.Bot.QueuedWrapper
             ChatId fromChatId,
             int messageId,
             bool disableNotification = false,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.ForwardMessageAsync(chatId,
@@ -150,6 +150,111 @@ namespace Telegram.Bot.QueuedWrapper
                                               chatId);
         }
 
+        public async Task<Message> SendPollAsync(
+            ChatId chatId,
+            string question,
+            IEnumerable<string> options,
+            bool disableNotification = default,
+            int replyToMessageId = default,
+            IReplyMarkup replyMarkup = default,
+            CancellationToken cancellationToken = default,
+            bool? isAnonymous = default,
+            PollType? type = default,
+            bool? allowsMultipleAnswers = default,
+            int? correctOptionId = default,
+            bool? isClosed = default,
+            string explanation = default,
+            ParseMode explanationParseMode = default,
+            int? openPeriod = default,
+            DateTime? closeDate = default)
+        {
+            return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendPollAsync(chatId,
+                                                                                                            question,
+                                                                                                            options,
+                                                                                                            disableNotification,
+                                                                                                            replyToMessageId,
+                                                                                                            replyMarkup,
+                                                                                                            cancellationToken,
+                                                                                                            isAnonymous,
+                                                                                                            type,
+                                                                                                            allowsMultipleAnswers,
+                                                                                                            correctOptionId,
+                                                                                                            isClosed,
+                                                                                                            explanation,
+                                                                                                            explanationParseMode,
+                                                                                                            openPeriod,
+                                                                                                            closeDate),
+                                                       chatId);
+        }
+
+        public async Task<Poll> StopPollAsync(
+            ChatId chatId,
+            int messageId,
+            InlineKeyboardMarkup replyMarkup = default,
+            CancellationToken cancellationToken = default)
+        {
+            return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.StopPollAsync(chatId,
+                                                                                                            messageId,
+                                                                                                            replyMarkup,
+                                                                                                            cancellationToken),
+                                                       chatId);
+
+        }
+
+        public async Task<Message> SendDiceAsync(
+            ChatId chatId,
+            bool disableNotification = default,
+            int replyToMessageId = default,
+            IReplyMarkup replyMarkup = default,
+            CancellationToken cancellationToken = default,
+            Emoji? emoji = default)
+        {
+            return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendDiceAsync(chatId,
+                                                                                                            disableNotification,
+                                                                                                            replyToMessageId,
+                                                                                                            replyMarkup,
+                                                                                                            cancellationToken,
+                                                                                                            emoji),
+                                                       chatId);
+        }
+
+        public async Task SetChatAdministratorCustomTitleAsync(
+            ChatId chatId,
+            int userId,
+            string customTitle,
+            CancellationToken cancellationToken = default)
+        {
+            await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SetChatAdministratorCustomTitleAsync(chatId,
+                                                                                                                            userId,
+                                                                                                                            customTitle,
+                                                                                                                            cancellationToken),
+                                                       chatId);
+        }
+
+        public async Task SetChatPermissionsAsync(
+            ChatId chatId,
+            ChatPermissions permissions,
+            CancellationToken cancellationToken = default)
+        {
+            await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SetChatPermissionsAsync(chatId,
+                                                                                                               permissions,
+                                                                                                               cancellationToken),
+                                                       chatId);
+        }
+
+        public async Task<BotCommand[]> GetMyCommandsAsync(CancellationToken cancellationToken = default)
+        {
+            return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.GetMyCommandsAsync(cancellationToken));
+        }
+
+        public async Task SetMyCommandsAsync(
+            IEnumerable<BotCommand> commands,
+            CancellationToken cancellationToken = default)
+        {
+            await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SetMyCommandsAsync(commands,
+                                                                                                          cancellationToken));
+        }
+
         public async Task<Message> SendPhotoAsync(
             ChatId chatId,
             InputOnlineFile photo,
@@ -158,7 +263,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendPhotoAsync(chatId,
                                                                                                              photo,
@@ -182,7 +287,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken(),
+            CancellationToken cancellationToken = default,
             InputMedia thumb = null)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendAudioAsync(chatId,
@@ -208,7 +313,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken(),
+            CancellationToken cancellationToken = default,
             InputMedia thumb = null)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendDocumentAsync(chatId,
@@ -229,7 +334,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendStickerAsync(chatId,
                                                                                                                sticker,
@@ -252,7 +357,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken(),
+            CancellationToken cancellationToken = default,
             InputMedia thumb = null)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendVideoAsync(chatId,
@@ -283,7 +388,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendAnimationAsync(chatId,
                                                                                                                  animation,
@@ -309,7 +414,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _telegramBotClientImplementation.SendVoiceAsync(chatId,
                                                                          voice,
@@ -330,7 +435,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken(),
+            CancellationToken cancellationToken = default,
             InputMedia thumb = null)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendVideoNoteAsync(chatId,
@@ -351,7 +456,7 @@ namespace Telegram.Bot.QueuedWrapper
             IEnumerable<InputMediaBase> media,
             bool disableNotification = false,
             int replyToMessageId = 0,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendMediaGroupAsync(chatId,
@@ -367,7 +472,7 @@ namespace Telegram.Bot.QueuedWrapper
             ChatId chatId,
             bool disableNotification = false,
             int replyToMessageId = 0,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendMediaGroupAsync(inputMedia,
@@ -386,7 +491,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendLocationAsync(chatId,
                                                                                                                 latitude,
@@ -409,7 +514,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken(),
+            CancellationToken cancellationToken = default,
             string foursquareType = null)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendVenueAsync(chatId,
@@ -434,7 +539,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken(),
+            CancellationToken cancellationToken = default,
             string vCard = null)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendContactAsync(chatId,
@@ -452,7 +557,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task SendChatActionAsync(
             ChatId chatId,
             ChatAction chatAction,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendChatActionAsync(chatId,
                                                                                                            chatAction,
@@ -464,7 +569,7 @@ namespace Telegram.Bot.QueuedWrapper
             int userId,
             int offset = 0,
             int limit = 0,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.GetUserProfilePhotosAsync(userId,
@@ -475,7 +580,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task<File> GetFileAsync(
             string fileId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.GetFileAsync(fileId,
@@ -485,7 +590,7 @@ namespace Telegram.Bot.QueuedWrapper
         [Obsolete]
         public async Task<Stream> DownloadFileAsync(
             string filePath,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.DownloadFileAsync(filePath,
@@ -495,7 +600,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task DownloadFileAsync(
             string filePath,
             Stream destination,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.DownloadFileAsync(filePath,
                                                                                                          destination,
@@ -505,7 +610,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task<File> GetInfoAndDownloadFileAsync(
             string fileId,
             Stream destination,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                           .GetInfoAndDownloadFileAsync(fileId,
@@ -517,7 +622,7 @@ namespace Telegram.Bot.QueuedWrapper
             ChatId chatId,
             int userId,
             DateTime untilDate = new DateTime(),
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.KickChatMemberAsync(chatId,
                                                                                                            userId,
@@ -528,7 +633,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task LeaveChatAsync(
             ChatId chatId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.LeaveChatAsync(chatId,
                                                                                                       cancellationToken),
@@ -538,7 +643,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task UnbanChatMemberAsync(
             ChatId chatId,
             int userId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.UnbanChatMemberAsync(chatId,
                                                                                                             userId,
@@ -548,7 +653,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task<Chat> GetChatAsync(
             ChatId chatId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.GetChatAsync(chatId,
@@ -558,7 +663,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task<ChatMember[]> GetChatAdministratorsAsync(
             ChatId chatId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.GetChatAdministratorsAsync(chatId,
@@ -568,7 +673,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task<int> GetChatMembersCountAsync(
             ChatId chatId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.GetChatMembersCountAsync(chatId,
@@ -579,7 +684,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task<ChatMember> GetChatMemberAsync(
             ChatId chatId,
             int userId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.GetChatMemberAsync(chatId,
@@ -594,7 +699,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool showAlert = false,
             string url = null,
             int cacheTime = 0,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .AnswerCallbackQueryAsync(callbackQueryId,
@@ -608,20 +713,14 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task RestrictChatMemberAsync(
             ChatId chatId,
             int userId,
-            DateTime untilDate = new DateTime(),
-            bool? canSendMessages = null,
-            bool? canSendMediaMessages = null,
-            bool? canSendOtherMessages = null,
-            bool? canAddWebPagePreviews = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            ChatPermissions permissions,
+            DateTime untilDate = default,
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.RestrictChatMemberAsync(chatId,
                                                                                                                userId,
+                                                                                                               permissions,
                                                                                                                untilDate,
-                                                                                                               canSendMessages,
-                                                                                                               canSendMediaMessages,
-                                                                                                               canSendOtherMessages,
-                                                                                                               canAddWebPagePreviews,
                                                                                                                cancellationToken),
                                                 chatId);
         }
@@ -637,7 +736,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool? canRestrictMembers = null,
             bool? canPinMessages = null,
             bool? canPromoteMembers = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.PromoteChatMemberAsync(chatId,
                                                                                                               userId,
@@ -660,7 +759,7 @@ namespace Telegram.Bot.QueuedWrapper
             ParseMode parseMode = ParseMode.Default,
             bool disableWebPagePreview = false,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.EditMessageTextAsync(chatId,
@@ -679,7 +778,7 @@ namespace Telegram.Bot.QueuedWrapper
             ParseMode parseMode = ParseMode.Default,
             bool disableWebPagePreview = false,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .EditMessageTextAsync(inlineMessageId,
@@ -694,7 +793,7 @@ namespace Telegram.Bot.QueuedWrapper
             ChatId chatId,
             int messageId,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                           .StopMessageLiveLocationAsync(chatId,
@@ -707,7 +806,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task StopMessageLiveLocationAsync(
             string inlineMessageId,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .StopMessageLiveLocationAsync(inlineMessageId,
@@ -720,7 +819,7 @@ namespace Telegram.Bot.QueuedWrapper
             int messageId,
             string caption,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken(),
+            CancellationToken cancellationToken = default,
             ParseMode parseMode = ParseMode.Default)
         {
             return await
@@ -737,7 +836,7 @@ namespace Telegram.Bot.QueuedWrapper
             string inlineMessageId,
             string caption,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken(),
+            CancellationToken cancellationToken = default,
             ParseMode parseMode = ParseMode.Default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
@@ -753,7 +852,7 @@ namespace Telegram.Bot.QueuedWrapper
             int messageId,
             InputMediaBase media,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.EditMessageMediaAsync(chatId,
@@ -768,7 +867,7 @@ namespace Telegram.Bot.QueuedWrapper
             string inlineMessageId,
             InputMediaBase media,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .EditMessageMediaAsync(inlineMessageId,
@@ -782,7 +881,7 @@ namespace Telegram.Bot.QueuedWrapper
             ChatId chatId,
             int messageId,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                           .EditMessageReplyMarkupAsync(chatId,
@@ -795,7 +894,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task EditMessageReplyMarkupAsync(
             string inlineMessageId,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .EditMessageReplyMarkupAsync(inlineMessageId,
@@ -809,7 +908,7 @@ namespace Telegram.Bot.QueuedWrapper
             float latitude,
             float longitude,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                           .EditMessageLiveLocationAsync(chatId,
@@ -826,7 +925,7 @@ namespace Telegram.Bot.QueuedWrapper
             float latitude,
             float longitude,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .EditMessageLiveLocationAsync(inlineMessageId,
@@ -839,7 +938,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task DeleteMessageAsync(
             ChatId chatId,
             int messageId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.DeleteMessageAsync(chatId,
                                                                                                           messageId,
@@ -855,7 +954,7 @@ namespace Telegram.Bot.QueuedWrapper
             string nextOffset = null,
             string switchPmText = null,
             string switchPmParameter = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
@@ -878,20 +977,22 @@ namespace Telegram.Bot.QueuedWrapper
             string startParameter,
             string currency,
             IEnumerable<LabeledPrice> prices,
-            string providerData = null,
-            string photoUrl = null,
-            int photoSize = 0,
-            int photoWidth = 0,
-            int photoHeight = 0,
-            bool needName = false,
-            bool needPhoneNumber = false,
-            bool needEmail = false,
-            bool needShippingAddress = false,
-            bool isFlexible = false,
-            bool disableNotification = false,
-            int replyToMessageId = 0,
-            InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            string providerData = default,
+            string photoUrl = default,
+            int photoSize = default,
+            int photoWidth = default,
+            int photoHeight = default,
+            bool needName = default,
+            bool needPhoneNumber = default,
+            bool needEmail = default,
+            bool needShippingAddress = default,
+            bool isFlexible = default,
+            bool disableNotification = default,
+            int replyToMessageId = default,
+            InlineKeyboardMarkup replyMarkup = default,
+            CancellationToken cancellationToken = default,
+            bool sendPhoneNumberToProvider = default,
+            bool sendEmailToProvider = default)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendInvoiceAsync(chatId,
                                                                                                                title,
@@ -914,13 +1015,15 @@ namespace Telegram.Bot.QueuedWrapper
                                                                                                                disableNotification,
                                                                                                                replyToMessageId,
                                                                                                                replyMarkup,
-                                                                                                               cancellationToken));
+                                                                                                               cancellationToken,
+                                                                                                               sendPhoneNumberToProvider,
+                                                                                                               sendEmailToProvider));
         }
 
         public async Task AnswerShippingQueryAsync(
             string shippingQueryId,
             IEnumerable<ShippingOption> shippingOptions,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .AnswerShippingQueryAsync(shippingQueryId,
@@ -931,7 +1034,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task AnswerShippingQueryAsync(
             string shippingQueryId,
             string errorMessage,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .AnswerShippingQueryAsync(shippingQueryId,
@@ -941,7 +1044,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task AnswerPreCheckoutQueryAsync(
             string preCheckoutQueryId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .AnswerPreCheckoutQueryAsync(preCheckoutQueryId, cancellationToken));
@@ -950,7 +1053,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task AnswerPreCheckoutQueryAsync(
             string preCheckoutQueryId,
             string errorMessage,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .AnswerPreCheckoutQueryAsync(preCheckoutQueryId,
@@ -964,7 +1067,7 @@ namespace Telegram.Bot.QueuedWrapper
             bool disableNotification = false,
             int replyToMessageId = 0,
             InlineKeyboardMarkup replyMarkup = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SendGameAsync(chatId,
                                                                                                             gameShortName,
@@ -982,7 +1085,7 @@ namespace Telegram.Bot.QueuedWrapper
             int messageId,
             bool force = false,
             bool disableEditMessage = false,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SetGameScoreAsync(userId,
                                                                                                                 score,
@@ -999,7 +1102,7 @@ namespace Telegram.Bot.QueuedWrapper
             string inlineMessageId,
             bool force = false,
             bool disableEditMessage = false,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SetGameScoreAsync(userId,
                                                                                                          score,
@@ -1013,7 +1116,7 @@ namespace Telegram.Bot.QueuedWrapper
             int userId,
             long chatId,
             int messageId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.GetGameHighScoresAsync(userId,
@@ -1026,7 +1129,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task<GameHighScore[]> GetGameHighScoresAsync(
             int userId,
             string inlineMessageId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.GetGameHighScoresAsync(userId,
@@ -1036,7 +1139,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task<StickerSet> GetStickerSetAsync(
             string name,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.GetStickerSetAsync(name,
@@ -1046,7 +1149,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task<File> UploadStickerFileAsync(
             int userId,
             InputFileStream pngSticker,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.UploadStickerFileAsync(userId,
@@ -1062,7 +1165,7 @@ namespace Telegram.Bot.QueuedWrapper
             string emojis,
             bool isMasks = false,
             MaskPosition maskPosition = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.CreateNewStickerSetAsync(userId,
                                                                                                                 name,
@@ -1080,7 +1183,7 @@ namespace Telegram.Bot.QueuedWrapper
             InputOnlineFile pngSticker,
             string emojis,
             MaskPosition maskPosition = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.AddStickerToSetAsync(userId,
                                                                                                             name,
@@ -1090,10 +1193,58 @@ namespace Telegram.Bot.QueuedWrapper
                                                                                                             cancellationToken));
         }
 
+        public async Task CreateNewAnimatedStickerSetAsync(
+            int userId,
+            string name,
+            string title,
+            InputFileStream tgsSticker,
+            string emojis,
+            bool isMasks = default,
+            MaskPosition maskPosition = default,
+            CancellationToken cancellationToken = default)
+        {
+            await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.CreateNewAnimatedStickerSetAsync(userId,
+                                                                                                                        name,
+                                                                                                                        title,
+                                                                                                                        tgsSticker,
+                                                                                                                        emojis,
+                                                                                                                        isMasks,
+                                                                                                                        maskPosition,
+                                                                                                                        cancellationToken));
+        }
+
+        public async Task AddAnimatedStickerToSetAsync(
+            int userId,
+            string name,
+            InputFileStream tgsSticker,
+            string emojis,
+            MaskPosition maskPosition = default,
+            CancellationToken cancellationToken = default)
+        {
+            await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.AddAnimatedStickerToSetAsync(userId,
+                                                                                                                    name,
+                                                                                                                    tgsSticker,
+                                                                                                                    emojis,
+                                                                                                                    maskPosition,
+                                                                                                                    cancellationToken));
+        }
+
+        public async Task SetStickerSetThumbAsync(
+            string name,
+            int userId,
+            InputOnlineFile thumb = default,
+            CancellationToken cancellationToken = default)
+        {
+            await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SetStickerSetThumbAsync(name,
+                                                                                                               userId,
+                                                                                                               thumb,
+                                                                                                               cancellationToken));
+        }
+
         public async Task SetStickerPositionInSetAsync(
             string sticker,
             int position,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .SetStickerPositionInSetAsync(sticker, position, cancellationToken));
@@ -1101,7 +1252,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task DeleteStickerFromSetAsync(
             string sticker,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation
                                                    .DeleteStickerFromSetAsync(sticker, cancellationToken));
@@ -1109,7 +1260,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task<string> ExportChatInviteLinkAsync(
             ChatId chatId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             return await
                 _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.ExportChatInviteLinkAsync(chatId,
@@ -1120,7 +1271,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task SetChatPhotoAsync(
             ChatId chatId,
             InputFileStream photo,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SetChatPhotoAsync(chatId,
                                                                                                          photo,
@@ -1130,7 +1281,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task DeleteChatPhotoAsync(
             ChatId chatId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.DeleteChatPhotoAsync(chatId,
                                                                                                             cancellationToken),
@@ -1140,7 +1291,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task SetChatTitleAsync(
             ChatId chatId,
             string title,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SetChatTitleAsync(chatId,
                                                                                                          title,
@@ -1151,7 +1302,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task SetChatDescriptionAsync(
             ChatId chatId,
             string description = null,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SetChatDescriptionAsync(chatId,
                                                                                                                description,
@@ -1163,7 +1314,7 @@ namespace Telegram.Bot.QueuedWrapper
             ChatId chatId,
             int messageId,
             bool disableNotification = false,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.PinChatMessageAsync(chatId,
                                                                                                            messageId,
@@ -1174,7 +1325,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task UnpinChatMessageAsync(
             ChatId chatId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.UnpinChatMessageAsync(chatId,
                                                                                                              cancellationToken),
@@ -1184,7 +1335,7 @@ namespace Telegram.Bot.QueuedWrapper
         public async Task SetChatStickerSetAsync(
             ChatId chatId,
             string stickerSetName,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.SetChatStickerSetAsync(chatId,
                                                                                                               stickerSetName,
@@ -1194,7 +1345,7 @@ namespace Telegram.Bot.QueuedWrapper
 
         public async Task DeleteChatStickerSetAsync(
             ChatId chatId,
-            CancellationToken cancellationToken = new CancellationToken())
+            CancellationToken cancellationToken = default)
         {
             await _messageQueue.RunThroughQueue(() => _telegramBotClientImplementation.DeleteChatStickerSetAsync(chatId,
                                                                                                                  cancellationToken),
